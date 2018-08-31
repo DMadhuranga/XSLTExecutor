@@ -55,8 +55,4 @@ public class ParameterFileProcessor {
             }
         }
     }
-
-    public Document getDocument(){
-        return this.document;
-    }
 }
