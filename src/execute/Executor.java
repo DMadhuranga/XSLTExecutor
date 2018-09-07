@@ -21,14 +21,11 @@ public class Executor {
         TransformerFactory transFact = new TransformerFactoryImpl();
         Transformer trans = transFact.newTransformer(xsltSource);
 
-        for (int i = 3; i < args.length; i++) {
-            String[] parts = args[i].split("=");
-            trans.setParameter(parts[0], parts[1]);
-        }
-        ParameterFileProcessor parameterFileProcessor = new ParameterFileProcessor("/home/danushka/Downloads/format.xml");
+        ParameterFileProcessor parameterFileProcessor = new ParameterFileProcessor("/home/danushka/Downloads/output.xml");
         parameterFileProcessor.processOperators(trans);
 
         trans.transform(xmlSource, result);
+        System.out.println(sw);
         File outputFile = new File("/home/danushka/Downloads/output1.xml");
         FileWriter output = new FileWriter(outputFile);
         output.write(sw.toString());

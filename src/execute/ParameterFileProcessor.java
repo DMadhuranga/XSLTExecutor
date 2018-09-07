@@ -11,10 +11,12 @@ import javax.xml.transform.Transformer;
 import java.io.File;
 import java.io.IOException;
 
+import static execute.ExecutorConstants.COMMA;
 import static execute.ExecutorConstants.EMPTY_STRING;
 import static execute.ExecutorConstants.NAME;
 import static execute.ExecutorConstants.PARAMETER_FILE_ROOT;
 import static execute.ExecutorConstants.PROPERTY_OPERATOR;
+import static execute.ExecutorConstants.RUN_TIME_PROPERTIES;
 import static execute.ExecutorConstants.SCOPE;
 
 public class ParameterFileProcessor {
@@ -35,24 +37,21 @@ public class ParameterFileProcessor {
     }
 
     public void processOperators(Transformer transformer){
+        String runTimeProperties = EMPTY_STRING;
         Node rootNode = document.getElementsByTagName(PARAMETER_FILE_ROOT).item(0);
         for (int i = 0; i < rootNode.getChildNodes().getLength(); i++) {
-            Node operatorNode = rootNode.getChildNodes().item(i);
-            if (operatorNode.getNodeName().equals(PROPERTY_OPERATOR)) {
-                String name = EMPTY_STRING;
-                String scope = EMPTY_STRING;
-                for(int j=0;j<operatorNode.getAttributes().getLength();j++){
-                    Node propertyNode = operatorNode.getAttributes().item(j);
-                    if(propertyNode.getNodeName().equals(NAME)){
-                        name = propertyNode.getNodeValue();
-                    }else if(propertyNode.getNodeName().equals(SCOPE)){
-                        scope = propertyNode.getNodeValue();
-                    }
-                }
-                if(!(name.equals(EMPTY_STRING) || scope.equals(EMPTY_STRING))){
-                    transformer.setParameter(name,scope);
+            for(int j=0;j<rootNode.getAttributes().getLength();j++){
+                Node propertyNode = rootNode.getAttributes().item(j);
+                if(propertyNode.getNodeName().equals(RUN_TIME_PROPERTIES)){
+                    runTimeProperties = propertyNode.getNodeValue();
                 }
             }
+        }
+        String[] properties = runTimeProperties.split(COMMA);
+        int currentIndex = 0;
+        while (currentIndex<properties.length){
+            transformer.setParameter(properties[currentIndex],properties[currentIndex+1]);
+            currentIndex+=2;
         }
     }
 }
